@@ -652,6 +652,8 @@ body {
 }
 
 /* ========== الموبايل ========== */
+
+/* تابلت وموبايل كبير */
 @media (max-width: 800px) {
   .letter-wrap { flex-direction: column; gap: 24px; }
   .polaroid { width: 160px; padding: 8px 8px 36px; }
@@ -659,10 +661,41 @@ body {
   #typed { min-height: auto; }
 }
 
+/* موبايل */
 @media (max-width: 480px) {
+  /* مسافة تحت عشان زر الموسيقى ما يغطي اشي */
+  .screen { gap: 12px; padding: 16px 14px 80px; }
+
+  .hint { font-size: 1.3rem; }
+  .hint.small { font-size: 1rem; }
+
   .photo-pop { width: 170px; height: 170px; }
-  .cake { transform: scale(0.8); margin: -15px 0; }
-  .hint { font-size: 1.4rem; }
-  .card { padding: 22px 18px; }
-  #typed { font-size: 1.05rem; }
+
+  .age { font-size: 1.3rem; padding: 4px 18px; }
+  #ageNum { font-size: 2rem; }
+
+  /* الكيكة أصغر بدون ما تترك فراغ */
+  .cake { transform: scale(0.75); margin: -30px 0; }
+
+  .btn { font-size: 1.05rem; padding: 10px 26px; }
+
+  .card { padding: 20px 16px; border-width: 3px; }
+  .card h2 { font-size: 1.6rem; }
+  #typed { font-size: 1.05rem; line-height: 1.8; }
+
+  /* بالونات أصغر */
+  .balloon { width: 45px; height: 56px; }
+  .balloon::after { top: 56px; height: 45px; }
+
+  /* زر الموسيقى أصغر */
+  .music-btn { width: 46px; height: 46px; font-size: 1.3rem; bottom: 14px; left: 14px; }
 }
+
+/* موبايل قصير (أو التلفون بالعرض) */
+@media (max-height: 700px) {
+  .title { font-size: 2.2rem; }
+  .name { font-size: 1.8rem; }
+  .cake { transform: scale(0.65); margin: -45px 0; }
+  .polaroid { width: 130px; }
+}
+
