@@ -11,10 +11,10 @@ const MESSAGE = `
 
 // إذا بدك أغنية خاصة: حط ملف mp3 جنب index.html واكتب اسمه هون، مثلاً 'song.mp3'
 // إذا خليته فاضي '' رح يعزف لحن Happy Birthday من الكود
-const SONG_FILE = '';
+const SONG_FILE = 'song.mp3';
 
 // أغنية من يوتيوب (ID الفيديو من الرابط بعد v=) — خليه '' إذا ما بدك يوتيوب
-const YOUTUBE_ID = 'wNut8QshEx0';
+const YOUTUBE_ID = '';
 
 // ================= عناصر الصفحة =================
 const $ = (id) => document.getElementById(id);
