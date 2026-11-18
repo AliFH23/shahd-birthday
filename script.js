@@ -235,6 +235,8 @@ const MELODY = [
 const BEAT = 0.42; // ثواني لكل ضربة
 
 function initAudio() {
+  // آيفون: نخلي الصوت يشتغل حتى لو التلفون على الصامت
+  if (navigator.audioSession) navigator.audioSession.type = 'playback';
   if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
   if (audioCtx.state === 'suspended') audioCtx.resume();
 }
