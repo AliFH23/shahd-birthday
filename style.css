@@ -1,0 +1,668 @@
+/* ========== أساسيات ========== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Cairo', sans-serif;
+  min-height: 100vh;
+  overflow: hidden;
+  color: #fff;
+  background: linear-gradient(-45deg, #ff6fb5, #a259ff, #ffb347, #00d2ff);
+  background-size: 400% 400%;
+  animation: bgMove 12s ease infinite;
+  user-select: none;
+}
+
+@keyframes bgMove {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.hidden { display: none !important; }
+
+/* ========== الشاشات ========== */
+.screen {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: safe center;
+  gap: 18px;
+  padding: 20px;
+  text-align: center;
+  z-index: 2;
+  opacity: 0;
+  transform: scale(0.85);
+  pointer-events: none;
+  overflow-y: auto;
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+
+.screen.active {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.screen.active > * { pointer-events: auto; }
+
+.hint {
+  font-size: 1.8rem;
+  font-weight: 700;
+  text-shadow: 0 3px 10px rgba(0, 0, 0, 0.25);
+}
+
+.hint.small {
+  font-size: 1.15rem;
+  opacity: 0.95;
+  animation: pulse 1.6s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.06); }
+}
+
+/* ========== الهدية ========== */
+.gift {
+  position: relative;
+  width: 170px;
+  height: 170px;
+  cursor: pointer;
+  animation: shake 2.5s ease-in-out infinite;
+}
+
+.gift-box {
+  position: absolute;
+  bottom: 0;
+  left: 5px;
+  width: 160px;
+  height: 120px;
+  background: #ff3e7f;
+  border-radius: 8px;
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.25);
+}
+
+/* الشريطة العمودية */
+.gift-box::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 26px;
+  height: 100%;
+  background: #ffd93d;
+}
+
+.gift-lid {
+  position: absolute;
+  top: 10px;
+  left: -5px;
+  width: 180px;
+  height: 42px;
+  background: #ff5c93;
+  border-radius: 8px;
+  z-index: 2;
+  transition: transform 0.9s cubic-bezier(.5, -0.5, .3, 1.4), opacity 0.9s;
+}
+
+.gift-lid::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 26px;
+  height: 100%;
+  background: #ffd93d;
+}
+
+/* الفيونكة */
+.bow::before,
+.bow::after {
+  content: '';
+  position: absolute;
+  top: -32px;
+  width: 45px;
+  height: 35px;
+  border: 9px solid #ffd93d;
+  border-radius: 50% 50% 0 50%;
+}
+
+.bow::before { left: 42px; transform: rotate(-20deg); }
+.bow::after  { right: 42px; transform: rotate(20deg) scaleX(-1); }
+
+.gift.open { animation: none; }
+
+.gift.open .gift-lid {
+  transform: translateY(-220px) rotate(-35deg);
+  opacity: 0;
+}
+
+/* الصندوق بنزل ويختفي لما تطلع الصورة */
+.gift-box { transition: transform 0.8s ease, opacity 0.8s ease; }
+
+.gift.open .gift-box {
+  transform: translateY(80px) scale(0.6);
+  opacity: 0;
+}
+
+/* ========== الصورة اللي بتطلع من الهدية ========== */
+.photo-pop {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 210px;
+  height: 210px;
+  z-index: 3;
+  transform: translate(-50%, -20%) scale(0);
+  transition: transform 0.9s cubic-bezier(.5, 1.6, .5, 1) 0.35s;
+  pointer-events: none;
+}
+
+.gift.open .photo-pop {
+  transform: translate(-50%, -50%) scale(1);
+}
+
+/* الحلقة الملونة اللي بتلف */
+.photo-pop .ring {
+  position: absolute;
+  inset: -10px;
+  border-radius: 50%;
+  background: conic-gradient(#ff3e7f, #ffd93d, #00d2ff, #a259ff, #7CFF6B, #ff3e7f);
+  animation: spin 3s linear infinite;
+  filter: drop-shadow(0 0 18px rgba(255, 255, 255, 0.7));
+}
+
+.photo-pop img {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 6px solid #fff;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+}
+
+/* نجوم حوالين الصورة */
+.photo-pop::before,
+.photo-pop::after {
+  content: '✨';
+  position: absolute;
+  font-size: 2rem;
+  z-index: 2;
+  animation: twinkle 1.2s ease-in-out infinite alternate;
+}
+
+.photo-pop::before { top: -18px; right: -14px; }
+.photo-pop::after  { bottom: -10px; left: -18px; animation-delay: 0.6s; }
+
+@keyframes twinkle {
+  from { transform: scale(0.7) rotate(-15deg); opacity: 0.6; }
+  to   { transform: scale(1.2) rotate(15deg); opacity: 1; }
+}
+
+@keyframes shake {
+  0%, 80%, 100% { transform: rotate(0); }
+  84% { transform: rotate(-8deg); }
+  88% { transform: rotate(8deg); }
+  92% { transform: rotate(-6deg); }
+  96% { transform: rotate(6deg); }
+}
+
+/* ========== العناوين ========== */
+.title {
+  font-family: 'Lalezar', cursive;
+  font-size: clamp(2.4rem, 8vw, 4.5rem);
+  font-weight: 400;
+  color: #fff;
+  text-shadow: 4px 4px 0 #ff3e7f, 8px 8px 0 rgba(0, 0, 0, 0.15);
+  animation: bounce 1.8s ease-in-out infinite;
+}
+
+.name {
+  font-family: 'Lalezar', cursive;
+  font-size: clamp(2rem, 7vw, 3.5rem);
+  font-weight: 400;
+  color: #ffd93d;
+  text-shadow: 3px 3px 0 #a259ff;
+  animation: wiggle 2.2s ease-in-out infinite;
+}
+
+.age {
+  font-size: 1.6rem;
+  font-weight: 700;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 6px 22px;
+  border-radius: 50px;
+  backdrop-filter: blur(6px);
+}
+
+#ageNum {
+  font-family: 'Lalezar', cursive;
+  font-size: 2.4rem;
+  color: #ffd93d;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-10px); }
+}
+
+@keyframes wiggle {
+  0%, 100% { transform: rotate(-3deg); }
+  50%      { transform: rotate(3deg); }
+}
+
+/* ========== الكيكة ========== */
+.cake {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.candles {
+  display: flex;
+  direction: ltr;
+  gap: 30px;
+  margin-bottom: -4px;
+  cursor: pointer;
+}
+
+.candle {
+  position: relative;
+  width: 26px;
+  height: 70px;
+  border-radius: 6px 6px 2px 2px;
+  background: repeating-linear-gradient(45deg, #fff 0 8px, #00d2ff 8px 16px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.candle .num {
+  font-family: 'Lalezar', cursive;
+  font-size: 1.3rem;
+  color: #ff3e7f;
+  background: #fff;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  line-height: 26px;
+}
+
+.flame {
+  position: absolute;
+  top: -34px;
+  left: 50%;
+  width: 18px;
+  height: 30px;
+  background: radial-gradient(circle at 50% 70%, #fff 10%, #ffd93d 40%, #ff7b00 80%);
+  border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+  transform: translateX(-50%);
+  box-shadow: 0 0 20px 6px rgba(255, 200, 0, 0.6);
+  animation: flicker 0.3s ease-in-out infinite alternate;
+  transition: opacity 0.4s, transform 0.4s;
+}
+
+@keyframes flicker {
+  from { transform: translateX(-50%) scale(1) rotate(-2deg); }
+  to   { transform: translateX(-50%) scale(1.1, 0.95) rotate(2deg); }
+}
+
+/* الشموع منطفية */
+.cake.blown .flame {
+  animation: none;
+  opacity: 0;
+  transform: translateX(-50%) scale(0);
+}
+
+.cake.blown .candle::after {
+  content: '';
+  position: absolute;
+  top: -20px;
+  left: 50%;
+  width: 8px;
+  height: 8px;
+  background: rgba(220, 220, 220, 0.8);
+  border-radius: 50%;
+  animation: smoke 1.5s ease-out forwards;
+}
+
+@keyframes smoke {
+  to { transform: translate(-50%, -60px) scale(4); opacity: 0; }
+}
+
+.layer {
+  position: relative;
+  border-radius: 12px 12px 6px 6px;
+}
+
+.layer.top {
+  width: 170px;
+  height: 50px;
+  background: #ff8fc7;
+}
+
+/* الكريمة النازلة */
+.layer.top::after {
+  content: '';
+  position: absolute;
+  bottom: -12px;
+  left: 0;
+  width: 100%;
+  height: 20px;
+  background: radial-gradient(circle at 10px 0, #ff8fc7 10px, transparent 11px);
+  background-size: 22px 20px;
+}
+
+.layer.middle {
+  width: 210px;
+  height: 55px;
+  background: #a259ff;
+}
+
+.layer.bottom {
+  width: 250px;
+  height: 60px;
+  background: #ffb347;
+}
+
+.layer.middle::before,
+.layer.bottom::before {
+  content: '';
+  position: absolute;
+  top: 18px;
+  left: 0;
+  width: 100%;
+  height: 8px;
+  background: repeating-linear-gradient(90deg, #fff 0 10px, transparent 10px 22px);
+  opacity: 0.8;
+}
+
+.plate {
+  width: 290px;
+  height: 14px;
+  background: #fff;
+  border-radius: 50%;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25);
+}
+
+/* ========== الأزرار ========== */
+.btn {
+  font-family: 'Cairo', sans-serif;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #ff3e7f;
+  background: #fff;
+  border: none;
+  padding: 12px 34px;
+  border-radius: 50px;
+  cursor: pointer;
+  box-shadow: 0 6px 0 #ffd93d, 0 10px 25px rgba(0, 0, 0, 0.25);
+  transition: transform 0.15s, box-shadow 0.15s;
+  animation: popIn 0.6s cubic-bezier(.5, 1.8, .5, 1);
+}
+
+.btn:hover  { transform: translateY(-3px); }
+.btn:active { transform: translateY(4px); box-shadow: 0 2px 0 #ffd93d; }
+
+@keyframes popIn {
+  from { transform: scale(0); opacity: 0; }
+  to   { transform: scale(1); opacity: 1; }
+}
+
+/* ========== الرسالة + البولارويد ========== */
+.letter-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 40px;
+  max-width: 950px;
+  width: 100%;
+}
+
+.polaroid {
+  flex-shrink: 0;
+  position: relative;
+  width: 230px;
+  background: #fff;
+  padding: 12px 12px 48px;
+  border-radius: 4px;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.3);
+  transform: rotate(-6deg);
+  transition: transform 0.4s ease;
+}
+
+/* الأنيميشن يشتغل بس لما تفتح شاشة الرسالة */
+.screen.active .polaroid { animation: dropIn 0.9s cubic-bezier(.5, 1.6, .5, 1); }
+.screen.active .card     { animation: popIn 0.7s cubic-bezier(.5, 1.8, .5, 1); }
+
+.polaroid:hover { transform: rotate(0) scale(1.05); }
+
+.polaroid img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  border-radius: 2px;
+}
+
+/* شريط اللاصق */
+.polaroid::before {
+  content: '';
+  position: absolute;
+  top: -14px;
+  left: 50%;
+  width: 90px;
+  height: 28px;
+  background: rgba(255, 217, 61, 0.75);
+  transform: translateX(-50%) rotate(3deg);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.polaroid figcaption {
+  position: absolute;
+  bottom: 10px;
+  left: 0;
+  width: 100%;
+  font-family: 'Lalezar', cursive;
+  font-size: 1.4rem;
+  color: #ff3e7f;
+}
+
+@keyframes dropIn {
+  from { transform: translateY(-120vh) rotate(-30deg); }
+  to   { transform: rotate(-6deg); }
+}
+
+/* ========== كرت الرسالة ========== */
+.card {
+  max-width: 600px;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.95);
+  color: #4a2b5c;
+  padding: 30px 28px;
+  border-radius: 25px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+  border: 4px dashed #ff8fc7;
+}
+
+.card h2 {
+  font-family: 'Lalezar', cursive;
+  font-weight: 400;
+  font-size: 2rem;
+  color: #ff3e7f;
+  margin-bottom: 14px;
+}
+
+#typed {
+  font-size: 1.2rem;
+  line-height: 2;
+  min-height: 160px;
+  white-space: pre-line;
+}
+
+#typed::after {
+  content: '|';
+  color: #ff3e7f;
+  animation: blink 0.8s step-end infinite;
+}
+
+#typed.done::after { content: ''; }
+
+@keyframes blink {
+  50% { opacity: 0; }
+}
+
+.sign {
+  margin-top: 14px;
+  font-weight: 700;
+  color: #a259ff;
+  text-align: left;
+  animation: popIn 0.6s ease;
+}
+
+/* ========== البالونات ========== */
+#balloons {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.balloon {
+  position: absolute;
+  bottom: -150px;
+  width: 60px;
+  height: 75px;
+  background: var(--c);
+  border-radius: 50% 50% 48% 48%;
+  pointer-events: auto;
+  cursor: pointer;
+  box-shadow: inset -8px -10px 0 rgba(0, 0, 0, 0.12);
+  animation: floatUp var(--d) linear forwards;
+}
+
+/* لمعة */
+.balloon::before {
+  content: '';
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  width: 12px;
+  height: 18px;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 50%;
+}
+
+/* الخيط */
+.balloon::after {
+  content: '';
+  position: absolute;
+  top: 75px;
+  left: 50%;
+  width: 2px;
+  height: 60px;
+  background: rgba(255, 255, 255, 0.7);
+}
+
+@keyframes floatUp {
+  0%   { transform: translateY(0) rotate(-5deg); }
+  50%  { transform: translateY(-60vh) rotate(5deg); }
+  100% { transform: translateY(-130vh) rotate(-5deg); }
+}
+
+.balloon.pop {
+  animation: popIt 0.25s ease-out forwards;
+}
+
+@keyframes popIt {
+  to { transform: scale(1.8); opacity: 0; }
+}
+
+/* ========== الكونفيتي ========== */
+#confetti {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 5;
+  pointer-events: none;
+}
+
+/* ========== زر الموسيقى ========== */
+.music-btn {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  z-index: 10;
+  width: 55px;
+  height: 55px;
+  font-size: 1.6rem;
+  font-family: 'Segoe UI Emoji', 'Apple Color Emoji', sans-serif;
+  border: none;
+  border-radius: 50%;
+  background: #fff;
+  cursor: pointer;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+}
+
+.music-btn.playing {
+  animation: spin 3s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ========== مشغّل يوتيوب ========== */
+.yt-wrap {
+  position: fixed;
+  bottom: 90px;
+  left: 20px;
+  z-index: 10;
+  width: 200px;
+  height: 200px;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 4px solid #fff;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  opacity: 0;
+  transform: scale(0.8);
+  pointer-events: none;
+  transition: opacity 0.5s, transform 0.5s;
+}
+
+.yt-wrap.show {
+  opacity: 1;
+  transform: scale(1);
+  pointer-events: auto;
+}
+
+.yt-wrap iframe {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* ========== الموبايل ========== */
+@media (max-width: 800px) {
+  .letter-wrap { flex-direction: column; gap: 24px; }
+  .polaroid { width: 160px; padding: 8px 8px 36px; }
+  .polaroid figcaption { font-size: 1.1rem; bottom: 6px; }
+  #typed { min-height: auto; }
+}
+
+@media (max-width: 480px) {
+  .photo-pop { width: 170px; height: 170px; }
+  .cake { transform: scale(0.8); margin: -15px 0; }
+  .hint { font-size: 1.4rem; }
+  .card { padding: 22px 18px; }
+  #typed { font-size: 1.05rem; }
+}
